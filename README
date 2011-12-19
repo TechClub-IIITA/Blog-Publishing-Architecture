@@ -3,8 +3,13 @@ The database backend would be supported by MongoDB and the web framework would b
 
 Setup
 
-1. For installing mongoDB download the source code from http://github.com/hmarr/mongoengine
 
+Installing MongoEngine
+1.Download the source code from http://github.com/hmarr/mongoengine
 2. Uncompress the code
-
 3. Now go here: http://peak.telecommunity.com/DevCenter/setuptools and under the heading "Distributing a setuptools-based project", download the ez_setup.py file. Follow the instruction given under the heading.
+
+Installing MongoDB in Fedora 15
+1. Install MongoDB using yum
+2. Install mongodb-server using yum
+
