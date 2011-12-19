@@ -1,0 +1,2 @@
+The project would focus in creating a web application that can be used as a publication mechanism for text, photo, video and other forms of data. 
+The database backend would be supported by MongoDB and the web framework would be based on Tornado.
