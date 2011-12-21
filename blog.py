@@ -4,11 +4,11 @@ import tornado.web
 import tornado.httpserver
 import tornado.ioloop
 import re
-import database
+#import database
 from tornado.options import define, options
 from mongoengine import *
 
-define("port", default=8888, help="run on given port", type=int)
+define("port", default=12346, help="run on given port", type=int)
 define("mongodb_host",default="127.0.0.1:27017", help="blog database host")
 define("mongodb_database",default="blog", help="blog database name")
 
@@ -59,16 +59,22 @@ class BaseHandler(tornado.web.RequestHandler):
 		self.write("Returning user ID 1000")
 		user_id=1000
 		if not user_id: return None
-		return User.objects(id=user_id)
+		return User.objects(usrid=user_id)
 
 class HomeHandler(BaseHandler):
 	def get(self):
 		self.write('Inside HomeHandler')
-		#entries=Post.objects(author=self.get_current_user())
-		#if not entries:
-		#	self.redirect("/compose")
-		#return 
-#		self.render("home.html", entries=entries)
+		usr=self.get_current_user()
+		if len(usr)>1:
+			self.write("More than two people logged in ")
+			return None
+		
+		for authobj in usr:
+			entries=Post.objects(author=authobj)
+		if not entries:
+			self.redirect("/compose")
+		return 
+		self.render("home.html", entries=entries)
 
 class ComposeHandler(BaseHandler):
 	def get(self):
