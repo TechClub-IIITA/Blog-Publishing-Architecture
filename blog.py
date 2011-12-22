@@ -21,8 +21,11 @@ class Application(tornado.web.Application):
 			(r"/auth/logout",AuthLogoutHandler),
 			(r"/compose",ComposeHandler),
 			(r"/about",AboutHandler),
-			(r"/feed",FeedHandler)
+			(r"/feed",FeedHandler),
+			(r"/entry/([^/]+)",EntryHandler)
 		]
+		connect('blog_database')
+
 
 		setting=dict(
 			xsrf_cookies=False,
@@ -35,9 +38,7 @@ class Application(tornado.web.Application):
 
 		tornado.web.Application.__init__(self,handlers,**setting)
 
-		connect('blog_database')
-
-
+		
 class User(Document):
         usrid=IntField()
         email = StringField(required=True)
@@ -73,6 +74,12 @@ class BaseHandler(tornado.web.RequestHandler):
 			sef.write('cookie not verified')
 			return
 		return User.objects.get(usrid=user_id)
+	def get_current_post_id(self):
+		noOfPosts=len(Post.objects())
+		return noOfPosts
+	def get_current_user_id(self):
+		noOfUsers=len(User.objects())
+		return noOfUsers
 
 class HomeHandler(BaseHandler):
 	def get(self):
@@ -89,12 +96,27 @@ class HomeHandler(BaseHandler):
 
 class ComposeHandler(BaseHandler):
 	def get(self):
-		pstid=self.get_argument("id",None);
+		#usrid=self.get_argument("usrid",None);
+		#To-Do: Check user authentication by a cookie here
+		usrid=self.get_current_user().usrid
 		entry=None;
-		if pstid:
-			#if a post already exists by the same ID
-			entry=Post.objects(postid=pstid)
+		if not usrid:
+			#The URL has been accessed directly
+			raise tornado.web.HTTPError(403)
+			return
 		self.render("compose.html",entry=entry)
+	def post(self):		
+		#To-Do Expand to other posts than text post, expand to tags, expand to store date
+		postcontent=self.get_argument("content")
+		posttitle=self.get_argument("title")
+		post = TextPost(title=posttitle, author=self.get_current_user())
+		post.content = postcontent
+		post.postid=self.get_current_post_id()+1;
+		#post.tags = ['mongodb', 'mongoengine']
+		post.save()
+
+		self.redirect("/entry/"+str(post.postid))
+		
 	
 class AboutHandler(BaseHandler):
 	def get(self):
@@ -129,7 +151,16 @@ class AuthLogoutHandler(BaseHandler):
 class EntryModule(tornado.web.UIModule):
 	def render(self, entry):
 		return self.render_string("entry.html", entry=entry)
-		
+
+class EntryHandler(BaseHandler):
+	def get(self,path):
+		entry1=Post.objects.get(postid=path)
+		if not entry1:
+			#No entry by this name
+			raise tornado.web.HTTPError(404)
+			return
+		self.render("entry.html",entry=entry1)
+			
 def main():
 	http_server = tornado.httpserver.HTTPServer(Application())
 	http_server.listen(options.port)
