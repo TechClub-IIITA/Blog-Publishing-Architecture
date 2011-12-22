@@ -1,14 +1,13 @@
-#Small code to learn about Requesr Handlers
+#Author: Divij Vaidya
 
 import tornado.web
 import tornado.httpserver
 import tornado.ioloop
 import re
-#import database
 from tornado.options import define, options
 from mongoengine import *
 
-define("port", default=12346, help="run on given port", type=int)
+define("port", default=64321, help="run on given port", type=int)
 define("mongodb_host",default="127.0.0.1:27017", help="blog database host")
 define("mongodb_database",default="blog", help="blog database name")
 
@@ -26,9 +25,12 @@ class Application(tornado.web.Application):
 		]
 
 		setting=dict(
-			xsrf_cookies=True,
-			login_url="auth/login",
+			xsrf_cookies=False,
+			#login_url="auth/login",
 			cookie_secret="AsdfsvAFDFavdaSVvfaA214eQEd324w2dF",
+			blog_title="Tumblike",
+			ui_modules={"Entry": EntryModule},
+			autoescape=None
 		)
 
 		tornado.web.Application.__init__(self,handlers,**setting)
@@ -39,6 +41,7 @@ class Application(tornado.web.Application):
 class User(Document):
         usrid=IntField()
         email = StringField(required=True)
+	passwd = StringField(required=True)
         first_name = StringField(max_length=50)
         last_name = StringField(max_length=50)
 
@@ -65,25 +68,24 @@ class LinkPost(Post):
 
 class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
-		#user_id=self.get_secure_cookie("user")
-		user_id=1000
-		if not user_id: return None
-		return User.objects(usrid=user_id)
+		user_id=self.get_secure_cookie("user")
+		if not user_id: 
+			sef.write('cookie not verified')
+			return
+		return User.objects.get(usrid=user_id)
 
 class HomeHandler(BaseHandler):
 	def get(self):
-		self.write('Inside HomeHandler')
+		#self.write('Inside HomeHandler')
 		usr=self.get_current_user()
-		if len(usr)>1:
-			self.write("More than one person logged in ")
-			return None
 		
-		for authobj in usr:
-			entries=Post.objects(author=authobj)
+		entries=Post.objects(author=usr)
 		if not entries:
 			self.redirect("/compose")
-		return 
+			return 
+		
 		self.render("home.html", entries=entries)
+		
 
 class ComposeHandler(BaseHandler):
 	def get(self):
@@ -101,12 +103,32 @@ class AboutHandler(BaseHandler):
 class FeedHandler(BaseHandler):
 	def get(self):
 		self.write("You have reached feed page")
-class AuthLoginHandler():
+
+class AuthLoginHandler(BaseHandler):
+	def post(self):
+		getemail=self.get_argument("email",None)
+		pwd=self.get_argument("pwd",None)
+		userlist=User.objects.get(email=getemail)
+		dbpass=userlist.passwd
+		
+		if dbpass==pwd:
+			#print('Login Sucessful')
+			self.set_secure_cookie("user",str(userlist.usrid))
+			#print('Cookie accepted')	
+			self.redirect("/")
+		else:
+			raise tornado.web.HTTPError(500,"Invalid Email/Password")
+		
+		
+class AuthLogoutHandler(BaseHandler):
 	def get(self):
-		self.write("You have reached login page")
-class AuthLogoutHandler():
-	def get(self):
-		self.write("You have rached logout page")
+		self.write("You have reached logout page")
+		self.clear_cookie("user")
+		self.redirect("/index.html")
+
+class EntryModule(tornado.web.UIModule):
+	def render(self, entry):
+		return self.render_string("entry.html", entry=entry)
 		
 def main():
 	http_server = tornado.httpserver.HTTPServer(Application())

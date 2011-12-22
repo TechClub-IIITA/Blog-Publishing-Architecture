@@ -1,9 +1,8 @@
-<html>
-	<head>
-		<title>Home</title>
-	</head>
-	
-	<body>
-		Welcome to home!	
-	</body>
-</html>
+{% extends "base.html" %}
+	{% block body %}
+		{% for entry in entries %}
+			{{ modules.Entry(entry) }}
+		{% end %}
+
+	{% end %}
+
