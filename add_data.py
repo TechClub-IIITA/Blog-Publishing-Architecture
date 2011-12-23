@@ -1,3 +1,5 @@
+#Helping file used to Add/Remove content from the database
+
 from mongoengine import *
 
 connect('blog_database')
