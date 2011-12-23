@@ -7,8 +7,15 @@
     {% block head %}{% end %}
   </head>
   <body>
+	<div id="header">
+        	<div style="float:right">
+            		<a href="/compose">{{ _("New post") }}</a> -
+			<a href="/auth/logout">{{ _("Sign out") }}</a>
+        	</div>
+		{% block h1 %}{% end %}
+	</div>	
     <div id="body">
-      <div id="content"> {% block body %}{% end %}</div>
+	<div id="content"> {% block body %}{% end %}</div>
     </div>
     {% block bottom %}{% end %}
   </body>

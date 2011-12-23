@@ -29,7 +29,7 @@ class Application(tornado.web.Application):
 
 		setting=dict(
 			xsrf_cookies=False,
-			#login_url="auth/login",
+			login_url="auth/login",
 			cookie_secret="AsdfsvAFDFavdaSVvfaA214eQEd324w2dF",
 			blog_title="Tumblike",
 			ui_modules={"Entry": EntryModule},
@@ -71,8 +71,9 @@ class BaseHandler(tornado.web.RequestHandler):
 	def get_current_user(self):
 		user_id=self.get_secure_cookie("user")
 		if not user_id: 
-			sef.write('cookie not verified')
-			return
+			#self.write('cookie not verified')
+			#print "Cookie Verification Filed"
+			return None
 		return User.objects.get(usrid=user_id)
 	def get_current_post_id(self):
 		noOfPosts=len(Post.objects())
@@ -85,6 +86,9 @@ class HomeHandler(BaseHandler):
 	def get(self):
 		#self.write('Inside HomeHandler')
 		usr=self.get_current_user()
+		if not usr:
+			self.render("index.html")
+			return
 		
 		entries=Post.objects(author=usr)
 		if not entries:
@@ -96,13 +100,11 @@ class HomeHandler(BaseHandler):
 
 class ComposeHandler(BaseHandler):
 	def get(self):
-		#usrid=self.get_argument("usrid",None);
-		#To-Do: Check user authentication by a cookie here
-		usrid=self.get_current_user().usrid
+		usridobj=self.get_current_user();
 		entry=None;
-		if not usrid:
+		if not usridobj:
 			#The URL has been accessed directly
-			raise tornado.web.HTTPError(403)
+			raise tornado.web.HTTPError(404,"Forbidden Access")
 			return
 		self.render("compose.html",entry=entry)
 	def post(self):		
@@ -127,6 +129,8 @@ class FeedHandler(BaseHandler):
 		self.write("You have reached feed page")
 
 class AuthLoginHandler(BaseHandler):
+	def get(self):
+		self.render("index.html")
 	def post(self):
 		getemail=self.get_argument("email",None)
 		pwd=self.get_argument("pwd",None)
@@ -134,9 +138,7 @@ class AuthLoginHandler(BaseHandler):
 		dbpass=userlist.passwd
 		
 		if dbpass==pwd:
-			#print('Login Sucessful')
 			self.set_secure_cookie("user",str(userlist.usrid))
-			#print('Cookie accepted')	
 			self.redirect("/")
 		else:
 			raise tornado.web.HTTPError(500,"Invalid Email/Password")
@@ -144,13 +146,13 @@ class AuthLoginHandler(BaseHandler):
 		
 class AuthLogoutHandler(BaseHandler):
 	def get(self):
-		self.write("You have reached logout page")
+		self.write("You have successfully logged out")
 		self.clear_cookie("user")
-		self.redirect("/index.html")
+		
 
 class EntryModule(tornado.web.UIModule):
 	def render(self, entry):
-		return self.render_string("entry.html", entry=entry)
+		return self.render_string("entry.html", entry=entry,show_comments=False,entry_page=False)
 
 class EntryHandler(BaseHandler):
 	def get(self,path):
@@ -159,7 +161,7 @@ class EntryHandler(BaseHandler):
 			#No entry by this name
 			raise tornado.web.HTTPError(404)
 			return
-		self.render("entry.html",entry=entry1)
+		self.render("entry.html",entry=entry1,show_comments=True,entry_page=True)
 			
 def main():
 	http_server = tornado.httpserver.HTTPServer(Application())

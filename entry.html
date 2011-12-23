@@ -1,5 +1,31 @@
+{% if entry_page %}
+	<div style="float:right">
+		{% if current_user %}
+        	<a href="/compose">{{_("New post") }}</a> -
+                <a href="/auth/logout">{{ _("Sign out") }}</a>
+		{% else %}
+		<a href="/">{{ _("Sign in") }} </a>
+		{% end %}
+
+	</div>
+	
+{% end %}
 <div class="entry">
+	<h1><a href="/entry/{{ entry.postid }}">{{ escape(entry.title) }}</a></h1>
+	{% if entry.date %}
+	<div class="date">
+    		{{ locale.format_date(entry.date, full_format=True, shorter=True) }}
+  	</div>
+	{% end %}
 	<div class="body" >
 		{{ entry.content }}
 	</div>
+	{% if entry.tags %}
+	<div class="tags">
+		Tags: {{ locale.list(entry.tags)}}
+	</div>
+	{% end %}
+	{% if show_comments %}hello comments
+	{% end %}
 </div>
+

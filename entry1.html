@@ -1,0 +1,30 @@
+<div class="entry">
+ <!-- <h1><a href="/{{ entry.slug }}">{{ escape(entry.title) }}</a></h1>-->
+  <!--<div class="date">
+    {{ locale.format_date(entry.published, full_format=True, shorter=True) }}
+  </div>
+  <div class="facebook">
+    <iframe src="http://www.facebook.com/plugins/like.php?href={{ url_escape('http://' + request.host + '/' + entry.slug) }}&amp;layout=button_count" scrolling="no" frameborder="0" allowTransparency="true" ></iframe>
+  </div>-->
+  <div class="body">{{ entry.body }}</div>
+  <!--{% if entry.tags %}
+    <div class="tags">
+      {{ locale.list(['<a href="/t/%(tag)s">%(escaped_tag)s</a>' % {"tag": tag, "escaped_tag": escape(tag)} for tag in sorted(entry.tags)]) }}
+    </div>
+  {% end %}-->
+  <!--{% if current_user and current_user.administrator %}
+    <div class="admin">
+      <a href="/compose?key={{ str(entry.key()) }}">{{ _("Edit") }}</a>
+      <a href="/delete?key={{ str(entry.key()) }}">{{ _("Delete") }}</a>
+      <a href="/hide?key={{ str(entry.key()) }}">{{ _("Hide") }}</a>
+    </div>
+  {% end %}
+  <div class="comments" id="comments">
+    {% if show_comments %}
+      <div id="fb-root"></div>
+      <fb:comments href="{{ 'http://' + request.host + '/' + entry.slug }}"></fb:comments>
+    {% else %}
+      <a href="/{{ entry.slug }}#comments">{{ _("Comments") }}</a>
+    {% end %}
+  </div>-->
+</div>

@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+	{% block h1 %}
+		<h1><a href="/">{{ escape(handler.settings["blog_title"]) }}</a></h1>
+	{% end %}
 	{% block body %}
 		{% for entry in entries %}
 			{{ modules.Entry(entry) }}
