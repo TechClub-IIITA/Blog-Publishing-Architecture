@@ -4,12 +4,13 @@ import tornado.web
 import tornado.httpserver
 import tornado.ioloop
 import re
+import datetime
 from tornado.options import define, options
 from mongoengine import *
 
 define("port", default=64321, help="run on given port", type=int)
-define("mongodb_host",default="127.0.0.1:27017", help="blog database host")
-define("mongodb_database",default="blog", help="blog database name")
+define("mongodb_host",default="127.0.0.1:27017", help="blog database host")#Not bring used right now
+define("mongodb_database",default="blog", help="blog database name")#Not being used right now
 
 
 
@@ -21,7 +22,7 @@ class Application(tornado.web.Application):
 			(r"/auth/logout",AuthLogoutHandler),
 			(r"/compose",ComposeHandler),
 			(r"/about",AboutHandler),
-			(r"/feed",FeedHandler),
+			(r"/feed",FeedHandler),#To-Do
 			(r"/entry/([^/]+)",EntryHandler)
 		]
 		connect('blog_database')
@@ -56,13 +57,14 @@ class Post(Document):
         author = ReferenceField(User, reverse_delete_rule=CASCADE)
         tags = ListField(StringField(max_length=30))
         comments = ListField(EmbeddedDocumentField(Comment))
-	date=DateTimeField()
+	date=DateTimeField(default=datetime.datetime.now())
 
 class TextPost(Post):
         content = StringField()
 
 class ImagePost(Post):
         image_path = StringField()
+	image=FileField()
 
 class LinkPost(Post):
         link_url = StringField()
@@ -84,7 +86,6 @@ class BaseHandler(tornado.web.RequestHandler):
 
 class HomeHandler(BaseHandler):
 	def get(self):
-		#self.write('Inside HomeHandler')
 		usr=self.get_current_user()
 		if not usr:
 			self.render("index.html")
@@ -111,10 +112,12 @@ class ComposeHandler(BaseHandler):
 		#To-Do Expand to other posts than text post, expand to tags, expand to store date
 		postcontent=self.get_argument("content")
 		posttitle=self.get_argument("title")
+		tags=self.get_argument("tags")
 		post = TextPost(title=posttitle, author=self.get_current_user())
 		post.content = postcontent
-		post.postid=self.get_current_post_id()+1;
-		#post.tags = ['mongodb', 'mongoengine']
+		post.postid=self.get_current_post_id()+1
+		post.tags = tags.split(',')
+		post.date=datetime.datetime.now()
 		post.save()
 
 		self.redirect("/entry/"+str(post.postid))
@@ -162,6 +165,17 @@ class EntryHandler(BaseHandler):
 			raise tornado.web.HTTPError(404)
 			return
 		self.render("entry.html",entry=entry1,show_comments=True,entry_page=True)
+		return
+	def post(self,path):
+		newcomment=self.get_argument("comment")
+		commentusrname=self.get_argument("name")
+		#add comment to database
+		entry=Post.objects.get(postid=path)
+		com=Comment(name=commentusrname,content=newcomment)
+		entry.comments.append(com)
+		entry.save()
+                self.render("entry.html",entry=entry,show_comments=True,entry_page=True)
+		return
 			
 def main():
 	http_server = tornado.httpserver.HTTPServer(Application())

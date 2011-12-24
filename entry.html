@@ -17,15 +17,48 @@
     		{{ locale.format_date(entry.date, full_format=True, shorter=True) }}
   	</div>
 	{% end %}
+	{% if entry_page %}
 	<div class="body" >
 		{{ entry.content }}
 	</div>
+	{% end %}
 	{% if entry.tags %}
 	<div class="tags">
 		Tags: {{ locale.list(entry.tags)}}
 	</div>
 	{% end %}
-	{% if show_comments %}hello comments
+	{% if show_comments %}
+		{% for comment in entry.comments %}
+			<ul> Comment: {{ escape(comment.content) }} 
+				<ul>Posted by: {{escape(comment.content)}}</ul>
+			</ul>
+			
+		{% end %}
+	{% end %}
+	{% if entry_page %}
+		<div id="postcomment">
+			<h3> Leave a Reply </h3>
+			<form id="commentform" method="post" action= "{{ request.path }}" class="comment-form">
+				<div class="comment-textarea">
+					<label for="comment" style="opacity: 1; display: block;" >Enter your comment here...</label>
+					<div id="comment-form-comment">
+						<textarea id="comment" name="comment" style="resize: none; overflow-y: hidden; height: 145px;"></textarea>
+					</div>
+				</div>
+				<div class="comment-form-email">
+					<label for="name">Name
+						<span class="required">(required)</span>
+					</label>
+					<div class="comment-form-input">
+						<input id="name" type="text" value="" name="name"/>
+					</div>
+				</div>
+				<p class="form-submit">
+					<input id="submit-comment" type="submit" value="Post Comment" name="submit"/>
+				</p>
+			</form>
+		</div>	
+		
 	{% end %}
 </div>
 
