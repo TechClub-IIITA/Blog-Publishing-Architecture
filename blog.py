@@ -23,7 +23,8 @@ class Application(tornado.web.Application):
 			(r"/compose",ComposeHandler),
 			(r"/about",AboutHandler),
 			(r"/feed",FeedHandler),#To-Do
-			(r"/entry/([^/]+)",EntryHandler)
+			(r"/entry/([^/]+)",EntryHandler),
+			(r"/register",RegisterHandler)
 		]
 		connect('blog_database')
 
@@ -75,6 +76,7 @@ class BaseHandler(tornado.web.RequestHandler):
 		if not user_id: 
 			#self.write('cookie not verified')
 			#print "Cookie Verification Filed"
+			#self.render("index.html")
 			return None
 		return User.objects.get(usrid=user_id)
 	def get_current_post_id(self):
@@ -176,6 +178,19 @@ class EntryHandler(BaseHandler):
 		entry.save()
                 self.render("entry.html",entry=entry,show_comments=True,entry_page=True)
 		return
+class RegisterHandler(BaseHandler):
+	def get(self):
+		self.render("register.html")
+		return
+	def post(self):
+		newuser_first_name=self.get_argument("first")
+		newuser_last_name=self.get_argument("last")
+		newuser_email=self.get_argument("email")
+		newuser_pwd=self.get_argument("pass")
+		newuser_usrid=self.get_current_user_id()+1
+		nuusr=User(usrid=newuser_usrid,email=newuser_email,passwd=newuser_pwd,first_name=newuser_first_name,last_name=newuser_last_name)
+		nuusr.save()
+		self.redirect("/")
 			
 def main():
 	http_server = tornado.httpserver.HTTPServer(Application())
