@@ -1,64 +1,100 @@
 {% if entry_page %}
-	<div style="float:right">
-		{% if current_user %}
-        	<a href="/compose">{{_("New post") }}</a> -
-                <a href="/auth/logout">{{ _("Sign out") }}</a>
-		{% else %}
-		<a href="/">{{ _("Sign in") }} </a>
-		{% end %}
-
-	</div>
-	
-{% end %}
-<div class="entry">
-	<h1><a href="/entry/{{ entry.postid }}">{{ escape(entry.title) }}</a></h1>
-	{% if entry.date %}
-	<div class="date">
-    		{{ locale.format_date(entry.date, full_format=True, shorter=True) }}
-  	</div>
-	{% end %}
-	{% if entry_page %}
-	<div class="body" >
-		{{ entry.content }}
-	</div>
-	{% end %}
-	{% if entry.tags %}
-	<div class="tags">
-		Tags: {{ locale.list(entry.tags)}}
-	</div>
-	{% end %}
-	{% if show_comments %}
-		{% for comment in entry.comments %}
-			<ul> Comment: {{ escape(comment.content) }} 
-				<ul>Posted by: {{escape(comment.content)}}</ul>
+	<!-- start header -->
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<title>{{ escape(handler.settings["blog_title"]) }}</title>
+		<link href={{ static_url("default.css") }} rel="stylesheet" type="text/css" />
+	</head>
+	<div id="header">
+		<div id="logo">
+			<h1><a href="/">{{ escape(handler.settings["blog_title"]) }} </a></h1>
+			<p>&nbsp;&nbsp;by&nbsp; <a href="http://www.divijvaidya.in/">Divij Vaidya</a></p>
+		</div>
+		<div id="menu">
+			<ul>
+				{% if current_user %}
+					<li><a href="/">{{ _("Home") }}</a></li>
+					<li><a href="/compose">{{ _("New post") }}</a></li>
+					<li><a href="/auth/logout">{{ _("Sign out") }}</a></li>
+				{% else %}
+					<li><a href="/">{{ _("Sign in") }} </a></li>
+				{% end %}
 			</ul>
-			
-		{% end %}
-	{% end %}
-	{% if entry_page %}
-		<div id="postcomment">
-			<h3> Leave a Reply </h3>
-			<form id="commentform" method="post" action= "{{ request.path }}" class="comment-form">
-				<div class="comment-textarea">
-					<label for="comment" style="opacity: 1; display: block;" >Enter your comment here...</label>
-					<div id="comment-form-comment">
-						<textarea id="comment" name="comment" style="resize: none; overflow-y: hidden; height: 145px;"></textarea>
-					</div>
+		</div>
+	</div>
+	<!-- end header -->
+{% end %}
+{% if entry_page %}
+<div id="page">
+{% end %}
+
+
+	<!-- start content -->
+	<div id="content">
+		<!-- start latest-post -->
+		<div id="latest-post" class="post">
+			<h1 class="title"><a href="/entry/{{ entry.postid }}">{{ escape(entry.title) }}</a></h1>
+			<p class="meta">Posted by {{ entry.author.first_name }} on {{locale.format_date(entry.date, full_format=True, shorter=True)}}&nbsp;&nbsp;{%if not entry_page %}{% if entry.tags %}| Tags: {{ locale.list(entry.tags)}}{% end %} | Comments ({{ len(entry.comments) }}){%end %}</p>
+			<div class="entry">
+					{{ entry.content }}
+			</div>
+			{% if entry_page %}
+				<div class="post_meta">
+					Tags: {{ locale.list(entry.tags)}}
 				</div>
-				<div class="comment-form-email">
-					<label for="name">Name
-						<span class="required">(required)</span>
-					</label>
-					<div class="comment-form-input">
-						<input id="name" type="text" value="" name="name"/>
-					</div>
-				</div>
-				<p class="form-submit">
-					<input id="submit-comment" type="submit" value="Post Comment" name="submit"/>
-				</p>
-			</form>
-		</div>	
-		
-	{% end %}
+			{% end %}
+			<!-- Comments class-->
+			<div id="whole-comments" class="all-comments">
+				{% if show_comments %}
+					<p></p>
+					<h2> {{ len(entry.comments) }} comments </h2>
+					{% for comment in entry.comments %}
+						<div class="comment">
+							<div class="comment_body">
+							<p>{{ escape(comment.content) }}</p>
+							</div>
+							<p><div class="comment_date">
+							by
+							{{escape(comment.name)}} on blah. 
+							</div>							
+							</p>
+						</div>
+					{% end %}
+				{% end %}
+				{% if entry_page %}
+					<div id="postcomment">
+						<h2> Leave your comment </h2>
+						
+						<form id="commentform" method="post" action= "{{ request.path }}" class="comment-form">
+							<div class="form_row">							
+								<div class="comment-textarea">
+									<label for="comment" style="opacity: 1; display: block;" >Comment</label>
+									<div id="comment-form-comment">
+										<textarea id="comment" name="comment" style="resize: none; overflow-y: hidden;"  rows="10" cols="80"></textarea>
+									</div>
+								</div>
+							</div>
+							<div class="form_row">							
+								<label for="name" class="comment_form">Name * &nbsp;</label><input id="name" type="text" value="" name="name"/>
+								(required)
+								
+							</div>
+							<div class="form_row">							
+								<p class="form-submit">
+									<input id="submit-comment" type="submit" value="Post Comment" name="submit" class="button"/>
+								</p>
+							</div>
+						</form>
+					</div>		
+				{% end %}
+			</div>
+		</div>
+		<!-- end latest-post -->	
+	</div>
+	<!-- end content -->
+
+{% if entry_page %}
 </div>
+
+{% end %}
 
