@@ -1,14 +1,37 @@
 <html>
 <head>
 <title>Tumblike</title>
+<link href={{ static_url("login.css") }} rel="stylesheet" type="text/css" />
 </head>
 
-<body>
-<form name="loginInfo" action="http://localhost:64321/auth/login" method="post">
-Email: <input type="text" name="email" /><br />
-Password: <input type="password" name="pwd" />
-<input type="submit" value="Login" />
-<p><a href="http://localhost:64321/register">Register</a> </p>
-</form>
+<body class="home">
+<div id="wrapper">
+	<div id="header">
+		<div id="top_menu">
+			<ul>
+			<li><a href="http://localhost:8888/register" class="inline-box">Register</a></li>
+			<li><a href="http://localhost:8888/about" class="inline-box">About Us</a></li>
+			</ul>
+		</div>
+	</div>
+	<div id="content">
+		<h1>Tumblike</h1>
+		<form id="create-page"name="loginInfo" action="http://localhost:8888/auth/login" method="post">
+			<div class="page-input floatleft">
+				<label for="email">Email</label>
+				<input id="email" type="text" name="email" />
+			</div>
+			<div class="page-input floatright">
+				<label for="password">Password</label>
+				<input id="password" type="password" name="password" />
+			</div>
+			<div class="clear"></div>
+			<div class="page-submit">
+				<input id="create-page-button" type="submit" value="Submit" name="create-page-button">
+			</div>
+		</form>
+	</div>
+	
+</div>
 </body>
 </html> 

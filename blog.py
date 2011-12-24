@@ -5,10 +5,11 @@ import tornado.httpserver
 import tornado.ioloop
 import re
 import datetime
+import os.path
 from tornado.options import define, options
 from mongoengine import *
 
-define("port", default=64321, help="run on given port", type=int)
+define("port", default=8888, help="run on given port", type=int)
 define("mongodb_host",default="127.0.0.1:27017", help="blog database host")#Not bring used right now
 define("mongodb_database",default="blog", help="blog database name")#Not being used right now
 
@@ -34,6 +35,7 @@ class Application(tornado.web.Application):
 			login_url="auth/login",
 			cookie_secret="AsdfsvAFDFavdaSVvfaA214eQEd324w2dF",
 			blog_title="Tumblike",
+			static_path=os.path.join(os.path.dirname(__file__), "static"),
 			ui_modules={"Entry": EntryModule},
 			autoescape=None
 		)
@@ -138,7 +140,7 @@ class AuthLoginHandler(BaseHandler):
 		self.render("index.html")
 	def post(self):
 		getemail=self.get_argument("email",None)
-		pwd=self.get_argument("pwd",None)
+		pwd=self.get_argument("password",None)
 		userlist=User.objects.get(email=getemail)
 		dbpass=userlist.passwd
 		

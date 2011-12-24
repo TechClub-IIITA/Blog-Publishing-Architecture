@@ -3,17 +3,25 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>{{ escape(handler.settings["blog_title"]) }}</title>
-    
-    {% block head %}{% end %}
+	<link href={{ static_url("default.css") }} rel="stylesheet" type="text/css" />
   </head>
   <body>
+	<!-- start header -->
 	<div id="header">
-        	<div style="float:right">
-            		<a href="/compose">{{ _("New post") }}</a> -
-			<a href="/auth/logout">{{ _("Sign out") }}</a>
-        	</div>
-		{% block h1 %}{% end %}
-	</div>	
+		<div id="logo">
+			<h1><a href="/">{{ escape(handler.settings["blog_title"]) }} </a></h1>
+			<p>&nbsp;&nbsp;by&nbsp; <a href="http://www.divijvaidya.in/">Divij Vaidya</a></p>
+		</div>
+		<div id="menu">
+			<ul>
+				<li><a href="/">{{ _("Home") }}</a></li>
+				<li><a href="/compose">{{ _("New post") }}</a></li>
+				<li><a href="/auth/logout">{{ _("Sign out") }}</a></li>
+			</ul>
+		</div>
+	</div>
+	<!-- end header -->
+	
     <div id="body">
 	<div id="content"> {% block body %}{% end %}</div>
     </div>
