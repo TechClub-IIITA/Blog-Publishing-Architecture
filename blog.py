@@ -96,7 +96,7 @@ class HomeHandler(BaseHandler):
 			self.render("index.html")
 			return
 		
-		entries=Post.objects(author=usr)
+		entries=Post.objects(author=usr).order_by("-date")
 		if not entries:
 			self.redirect("/compose")
 			return 
