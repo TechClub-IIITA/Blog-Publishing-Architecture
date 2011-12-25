@@ -9,14 +9,15 @@
 	<div id="header">
 		<div id="top_menu">
 			<ul>
-			<li><a href="http://localhost:8888/register" class="inline-box">Register</a></li>
-			<li><a href="http://localhost:8888/about" class="inline-box">About Us</a></li>
+			
+			<li><a href="{{request.protocol}}://{{request.host}}/register" class="inline-box">Register</a></li>
+			<li><a href="{{request.protocol}}://{{request.host}}/about" class="inline-box">About Us</a></li>
 			</ul>
 		</div>
 	</div>
 	<div id="content">
 		<h1>Tumblike</h1>
-		<form id="create-page"name="loginInfo" action="http://localhost:8888/auth/login" method="post">
+		<form id="create-page"name="loginInfo" action="{{request.protocol}}://{{request.host}}/auth/login" method="post">
 			<div class="page-input floatleft">
 				<label for="email">Email</label>
 				<input id="email" type="text" name="email" />
