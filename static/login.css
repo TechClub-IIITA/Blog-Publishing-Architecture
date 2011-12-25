@@ -91,7 +91,22 @@ form#create-page .bigger-input{
 #create-page #email {
 	width:220px;
 	height:45px;
+	padding:0 20px 0 20px;
+	color:#5a646a;
+}
+
+#register-label {
+	float:left
+	width:220px;
+	height:45px;
 	padding:0 70px 0 20px;
+	color:#5a646a;
+}
+
+.register-field	{
+	width:150px;
+	height:45px;
+	padding:0 20px 0 20px;
 	color:#5a646a;
 }
 #create-page .page-submit {
@@ -112,7 +127,20 @@ form#create-page .bigger-input{
 	box-shadow: 0px 0px 5px #e0e0e0;
 	cursor:pointer;
 }
-
+#create-register-button {
+	height:48px;
+	border:#c5d3d2 1px solid;
+	/*width:100%;*/
+	text-align:center;
+	border-radius: 3px;
+	font-size:24px;
+	color:#8aa7b4;
+	font-family:Georgia, "Times New Roman", Times, serif;
+	font-weight:normal;
+	text-shadow:1px 1px 1px #fff;
+	box-shadow: 0px 0px 5px #e0e0e0;
+	cursor:pointer;
+}
 body.home #content {
 	width:500px;
 	padding-bottom:110px;

@@ -1,16 +1,26 @@
 <html>
 <head> 
 <title> {{ handler.settings["blog_title"] }}: Register </title>
+<link href={{ static_url("login.css") }} rel="stylesheet" type="text/css" />
 </head>
 
-<body>
-	<form id="register" class="register" method="post">
-		First Name: <input id="first" name="first" type="text"/>
-		Last Name:  <input id="last" name="last" type="text"/>
-		Email: <input id="email" name="email" type="email"/>
-		Password: <input id="pass" name="pass" type="password"/>
-		<p> <input type="submit" value="Submit"/></p>
-	</form>
+<body class="home">
+	<div id="wrapper">
+	<div id="content">
+		<div>
+			<h1>Sign up with us!</h1>
+		</div>
+		<div>
+			<form id="register" class="register" method="post">
+				<div><label class="register-label">First Name: </label><input id="first" name="first" type="text" class="register-field"/></div>
+				<div><label class="register-label">Last Name:  </label><input id="last" name="last" type="text" class="register-field"/></div>
+				<div><label class="register-label">Email: </label><input id="email" name="email" type="email" class="register-field"/></div>
+				<div><label class="register-label">Password: </label><input id="pass" name="pass" type="password" class="register-field"/></div>
+				<div><p> <input id="create-register-button" type="submit" value="Submit"/></p></div>
+			</form>
+		</div>
+	</div>
+	</div>
 </body>
 </html>
 
