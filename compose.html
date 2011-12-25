@@ -1,14 +1,28 @@
 {% extends "base.html" %}
 
 {% block body %}
-  <form action="{{ request.path }}" method="post" class="compose">
-	the path is {{request.path}}
-    <div style="margin-bottom:5px"><input name="title" type="text" class="title" value="{{ escape(entry.title) if entry else "" }}"/></div>
-    <div style="margin-bottom:5px"><textarea name="content" rows="30" cols="40" class="content">{{ escape(entry.content) if entry else "" }}</textarea></div>
-    <div>
-      <input type="submit" value="{{ _("Save changes") if entry else _("Publish post") }}" class="submit"/>
-      &nbsp;<a href="{{ "/entry/" }}">{{ _("Cancel") }}</a>
-    </div>
-    
-  </form>
+	<div id="compose-page">
+		<form action="{{ request.path }}" method="post" class="compose">
+		<div class="post-form-row">
+			<label for="post-title" class="label-title" >Title: &nbsp;</label><input id="post-title" name="post-title" type="text" class="post-title" value="{{ escape(entry.title) if entry else "" }}"/>
+		</div>
+		<br>
+		<div class="post-form-row">
+			<label for="post-content" class="label-title">Write Here: &nbsp;</label>
+		</div>
+		<div class="post-form-row">
+			<textarea id="post-content" name="post-content" rows="30" cols="100" >{{ escape(entry.content) if entry else "" }}</textarea>
+		</div>		
+		<div class="post-form-row">
+		<br>
+		<label for="tags" class="label-title" >Tags: &nbsp;</label><input id="tags" name="tags" type="text" class="post-title" value=""/>
+		</div>
+		<div class="post-form-row">
+			<br>
+		  <input type="submit" value="{{ _("Save changes") if entry else _("Publish post") }}" class="button"/>
+		  &nbsp;<a href="{{ "/entry/" }}">{{ _("Cancel") }}</a>
+		</div>
+		
+	  </form>
+	</div>
 {% end %}
