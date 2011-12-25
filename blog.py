@@ -53,6 +53,7 @@ class User(Document):
 class Comment(EmbeddedDocument):
         content = StringField()
         name = StringField(max_length=120)
+	date=DateTimeField(default=datetime.datetime.now())
 
 class Post(Document):
 	postid=IntField()
@@ -67,7 +68,7 @@ class TextPost(Post):
 
 class ImagePost(Post):
         image_path = StringField()
-	image=FileField()
+
 
 class LinkPost(Post):
         link_url = StringField()
@@ -114,8 +115,8 @@ class ComposeHandler(BaseHandler):
 		self.render("compose.html",entry=entry)
 	def post(self):		
 		#To-Do Expand to other posts than text post, expand to tags, expand to store date
-		postcontent=self.get_argument("content")
-		posttitle=self.get_argument("title")
+		postcontent=self.get_argument("post-content")
+		posttitle=self.get_argument("post-title")
 		tags=self.get_argument("tags")
 		post = TextPost(title=posttitle, author=self.get_current_user())
 		post.content = postcontent
@@ -176,6 +177,7 @@ class EntryHandler(BaseHandler):
 		#add comment to database
 		entry=Post.objects.get(postid=path)
 		com=Comment(name=commentusrname,content=newcomment)
+		com.date=datetime.datetime.now()
 		entry.comments.append(com)
 		entry.save()
                 self.render("entry.html",entry=entry,show_comments=True,entry_page=True)
