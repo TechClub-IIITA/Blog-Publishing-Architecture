@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>{{ escape(handler.settings["blog_title"]) }}</title>
 	<link href={{ static_url("default.css") }} rel="stylesheet" type="text/css" />
+	{% block head %}{% end %}
   </head>
   <body>
 	<!-- start header -->
